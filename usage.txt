@@ -1,0 +1,14 @@
+heatingkw:408
+heatingdollar:597
+waterheatingkw:183
+waterheatingdollar:268
+coolingkw:183
+coolingdollar:268
+lightskw:169
+lightsdollar:247
+applianceskw:169
+appliancesdollar:247
+electronicskw:295
+electronicsdollar:433
+totalkw:1407
+totaldollar:2060

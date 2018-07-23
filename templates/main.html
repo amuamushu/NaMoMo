@@ -2,11 +2,60 @@
   <head>
     <title>Your Usage</title>
     <link rel = "stylesheet" type = "text/css" href = "/css/main.css">
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+      google.charts.load('current', {'packages':['bar']});
+      google.charts.setOnLoadCallback(drawStuff);
+
+      function drawStuff() {
+        var data = google.visualization.arrayToDataTable([
+        ['Genre', 'Fantasy & Sci Fi', 'Romance', 'Mystery/Crime', 'General',
+         'Western', 'Literature', { role: 'annotation' } ],
+        ['2010', 10, 24, 20, 32, 18, 5, ''],
+        ['2020', 16, 22, 23, 30, 16, 9, ''],
+        ['2030', 28, 19, 29, 30, 12, 13, '']
+      ]);
+        var options = {
+        width: 600,
+        height: 400,
+        legend: { position: 'top', maxLines: 3 },
+        bar: { groupWidth: '75%' },
+        isStacked: true,
+        backgroundColor: 'black '
+      };
+        var options_stacked = {
+          isStacked: true,
+          height: 300,
+          backgroundColor: 'black',
+          legend: {position: 'top', maxLines: 3},
+          hAxis: {minValue: 0}
+        };
+
+
+      var chart = new google.charts.Bar(document.getElementById('dual_x_div'));
+      chart.draw(data, options, options_stacked);
+    };
+    </script>
   </head>
   <body>
-    <p>graph would be here</p>
-    <form method="get" action="/input">
-      <button type="submit">Continue</button>
-    </form>
+    <!-- Credit to Erik Terwan -->
+    <nav role='navigation'>
+      <div id="menuToggle">
+
+        <input type="checkbox" />
+
+
+        <span></span>
+        <span></span>
+        <span></span>
+
+        <ul id="menu">
+          <a href="/leaderboard"><li>Leaderboards</li></a>
+          <a href="/input"><li>Input data</li></a>
+          <a href="#"><li>Profile</li></a>
+        </ul>
+      </div>
+    </nav>
+    <p id = "dual_x_div"></p>
   </body>
 </html>

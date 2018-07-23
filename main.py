@@ -31,9 +31,17 @@ cssi_user = CssiUser.get_by_id(user.user_id())
 """
 
 import webapp2
+import jinja2
+import os
 
 from google.appengine.api import users
 from google.appengine.ext import ndb
+
+JINJA_ENV = jinja2.Environment(
+    loader = jinja2.FileSystemLoader(os.path.dirname(__file__)),
+    extensions = ['jinja2.ext.autoescape'],
+    autoescape = True
+)
 
 class CssiUser(ndb.Model):
   """CssiUser stores information about a logged-in user.
@@ -47,6 +55,10 @@ class CssiUser(ndb.Model):
   """
   first_name = ndb.StringProperty()
   last_name = ndb.StringProperty()
+  heat_usage = ndb.StringProperty()
+  cooling_usage = ndb.StringProperty()
+  lighting_usage = ndb.StringProperty()
+  total_power_usage = ndb.StringProperty()
  # usage_date = ndb.dictionary
 
 class LoginHandler(webapp2.RequestHandler):
@@ -62,10 +74,11 @@ class LoginHandler(webapp2.RequestHandler):
       if cssi_user:
         self.response.write('''
             Welcome %s %s (%s)! <br> %s <br>''' % (
-              cssi_user.first_name,
-              cssi_user.last_name,
-              email_address,
-              signout_link_html))
+                cssi_user.first_name,
+                cssi_user.last_name,
+                email_address,
+                signout_link_html))
+        self.redirect("/main")
       # If the user hasn't been to our site, we ask them to sign up
       else:
         self.response.write('''
@@ -99,17 +112,36 @@ class LoginHandler(webapp2.RequestHandler):
     self.response.write('Thanks for signing up, %s!' %
         cssi_user.first_name)
 
+
+
 class MainHandler(webapp2.RequestHandler):
     def get(self):
+        content = JINJA_ENV.get_template('templates/main.html')
         self.response.write(content.render())
+
+
+
 
 class InputHandler(webapp2.RequestHandler):
     def get(self):
-        pass
+        content = JINJA_ENV.get_template('templates/input.html')
+        self.response.write(content.render())
+
+    # def post(self):
+    #     content = JINJA_ENV.get_template('templates/input.html')
+
+
+
+class LeaderboardHandler(webapp2.RequestHandler):
+    def get(self):
+        content = JINJA_ENV.get_template('templates/leaderboard.html')
+        self.response.write(content.render())
+
 
 
 app = webapp2.WSGIApplication([
   ('/', LoginHandler),
   ('/main', MainHandler),
-  ('/input', InputHandler)
+  ('/input', InputHandler),
+  ('/leaderboard', LeaderboardHandler)
 ], debug=True)

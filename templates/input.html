@@ -1,6 +1,20 @@
 <html>
+  <head>
+    <title>Input</title>
+    <script>
+    function loadDoc() {
+var xhttp = new XMLHttpRequest();
+xhttp.onreadystatechange = function() {
+  if (this.readyState == 4 && this.status == 200) {
+    document.getElementById("demo").innerHTML =
+    this.responseText;
+  }
+};
+xhttp.open("GET", "ajax_info.txt", true);
+xhttp.send();
+}
+    </script>
   <body>
-    Hello {{ pizza }}
     <h1> Please Enter the important Information <br></h1>
 
     <form method="post" action="/input">
@@ -8,7 +22,9 @@
       Cooling Used: <input type="text" name="cooling_usage"><br>
       Light Used: <input type="text" name="lighting_usage"></br>
       Appliance Used: <input type="text" name="appliance_usage"></br>
-      <input type="submit" value="Save Data"></input>
+      <input type="submit" value="Save Data" onclick = "loadDoc()"></input>
+      <button type="reset">Reset the form</button>
     </form>
+    <p id = "demo"></p>
   </body>
 </html>

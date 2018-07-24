@@ -8,9 +8,6 @@
  * production code, beware of the browser
  * prefixes.
  */
-.axis .domain {
-   display: none;
- }
 
 body
 {
@@ -168,3 +165,7 @@ a:hover
   transform: scale(1.0, 1.0);
   opacity: 1;
 }
+
+.axis .domain {
+   display: none;
+ }

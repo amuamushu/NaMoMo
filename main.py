@@ -29,11 +29,12 @@ and then, looking it up later by doing
 
 cssi_user = CssiUser.get_by_id(user.user_id())
 """
-
+import json
 import webapp2
 import jinja2
 import os
 import datetime
+import logging
 
 from google.appengine.api import users
 from google.appengine.ext import ndb
@@ -92,8 +93,9 @@ class LoginHandler(webapp2.RequestHandler):
     # Otherwise, the user isn't logged in!
     else:
       self.response.write('''
-        Please log in to use our site! <br>
-        <a href="%s">Sign in</a>''' % (
+      <head><link rel = "stylesheet" type = "text/css" href = "css/login.css"></head>
+        <h1>Please log in to use our site!</h1> <br>
+        <button><a href="%s">Sign in</a></button><img src = "/css/welcome.gif">''' % (
           users.create_login_url('/')))
 
   def post(self):
@@ -125,31 +127,48 @@ class LogoutHandler(webapp2.RequestHandler):
 class MainHandler(webapp2.RequestHandler):
     def get(self):
         content = JINJA_ENV.get_template('templates/main.html')
-        self.response.write(content.render())
+        entries = Entry.query().filter(Entry.user_id == users.get_current_user().user_id()).fetch()
+        heat = ""
+        for i in entries:
+            heat += "   " +str(i.heating_usage)
+        self.response.write(content.render(heat = heat))
 
 
 class InputHandler(webapp2.RequestHandler):
     def get(self):
         content = JINJA_ENV.get_template('templates/input.html')
-        params={"pizza": 2, "name": 5}
-        self.response.write(content.render(params))
+        self.response.write(content.render())
 
     def post(self):
-        heat_usage = self.request.get('heating_usage')
-        print(heat_usage)
-        cold_usage = self.request.get('cooling_usage')
-        print(cold_usage)
-        light_usage = self.request.get('lighting_usage')
-        print(light_usage)
-        appliance_usage = self.request.get('appliance_usage')
-        print(appliance_usage)
+        entry = Entry(
+        heating_usage = int(self.request.get('heating_usage')),
+        cooling_usage = int(self.request.get('cooling_usage')),
+        lighting_usage = int(self.request.get('lighting_usage')),
+        appliance_usage = int(self.request.get('appliance_usage')),
+        date = datetime.datetime.strptime("07/24/2018", "%m/%d/%Y").date(),
+        user_id = users.get_current_user().user_id()
+        )
+        entry.put()
 
-        self.response.write("Your total heat usage for this month is: " + str(heat_usage) + "\n" +
-        "The kw of energy you used this month for cooling is: " + str(cold_usage) + "\n" +
-        "The kw of energy you used this month for light is: " + str(light_usage) + "\n" +
-        "The kw of energy you used this month for appliances is: " + str(appliance_usage))
+        content = JINJA_ENV.get_template('templates/input.html')
+        self.response.write(content.render())
 
 
+class JSONHandler(webapp2.RequestHandler):
+    def get(self):
+        entries = Entry.query().filter(Entry.user_id == users.get_current_user().user_id()).fetch()
+        resultlist = []
+        for entry in entries:
+            monthly_results = {
+            'month': entry.date.month,
+            'Heating':entry.heating_usage,
+            'WaterHeating':0,
+            'Cooling':entry.cooling_usage,
+            'Lights':entry.lighting_usage,
+            'Appliance':entry.appliance_usage,
+            'Electronics':0
+            }
+            resultlist.append(monthly_results)
 
 
 class LeaderboardHandler(webapp2.RequestHandler):
@@ -163,5 +182,6 @@ app = webapp2.WSGIApplication([
   ('/main', MainHandler),
   ('/input', InputHandler),
   ('/leaderboard', LeaderboardHandler),
-  ('/logout', LogoutHandler)
+  ('/logout', LogoutHandler),
+  ('/JSON', JSONHandler)
 ], debug=True)

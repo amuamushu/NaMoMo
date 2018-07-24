@@ -140,6 +140,7 @@ class InputHandler(webapp2.RequestHandler):
         self.response.write(content.render())
 
     def post(self):
+        button = False
         entry = Entry(
         heating_usage = int(self.request.get('heating_usage')),
         cooling_usage = int(self.request.get('cooling_usage')),
@@ -151,7 +152,7 @@ class InputHandler(webapp2.RequestHandler):
         entry.put()
 
         content = JINJA_ENV.get_template('templates/input.html')
-        self.response.write(content.render())
+        self.response.write(content.render(button = True))
 
 
 class JSONHandler(webapp2.RequestHandler):

@@ -8,6 +8,9 @@
  * production code, beware of the browser
  * prefixes.
  */
+.axis .domain {
+   display: none;
+ }
 
 body
 {

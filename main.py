@@ -33,6 +33,7 @@ cssi_user = CssiUser.get_by_id(user.user_id())
 import webapp2
 import jinja2
 import os
+import datetime
 
 from google.appengine.api import users
 from google.appengine.ext import ndb
@@ -44,22 +45,18 @@ JINJA_ENV = jinja2.Environment(
 )
 
 class CssiUser(ndb.Model):
-  """CssiUser stores information about a logged-in user.
-
-  The AppEngine users api stores just a couple of pieces of
-  info about logged-in users: a unique id and their email address.
-
-  If you want to store more info (e.g. their real name, high score,
-  preferences, etc, you need to create a Datastore model like this
-  example).
-  """
   first_name = ndb.StringProperty()
   last_name = ndb.StringProperty()
-  heat_usage = ndb.StringProperty()
-  cooling_usage = ndb.StringProperty()
-  lighting_usage = ndb.StringProperty()
-  total_power_usage = ndb.StringProperty()
+
  # usage_date = ndb.dictionary
+class Entry(ndb.Model):
+    date = ndb.DateProperty()
+    heating_usage = ndb.IntegerProperty()
+    cooling_usage = ndb.IntegerProperty()
+    lighting_usage = ndb.IntegerProperty()
+    appliance_usage = ndb.IntegerProperty()
+    user_id = ndb.StringProperty()
+
 
 class LoginHandler(webapp2.RequestHandler):
   def get(self):
@@ -68,8 +65,9 @@ class LoginHandler(webapp2.RequestHandler):
     if user:
       email_address = user.nickname()
       cssi_user = CssiUser.get_by_id(user.user_id())
+      self.response.write(user.user_id())
       signout_link_html = '<a href="%s">sign out</a>' % (
-          users.create_logout_url('/'))
+          users.create_logout_url('/logout'))
       # If the user has previously been to our site, we greet them!
       if cssi_user:
         self.response.write('''
@@ -113,6 +111,16 @@ class LoginHandler(webapp2.RequestHandler):
         cssi_user.first_name)
 
 
+class LogoutHandler(webapp2.RequestHandler):
+    def get(self):
+        user = users.get_current_user()
+        if user:
+            signout_link_html = users.create_logout_url('/')
+            email_address = user.nickname()
+            cssi_user = CssiUser.get_by_id(user.user_id())
+            self.redirect(signout_link_html)
+
+
 
 class MainHandler(webapp2.RequestHandler):
     def get(self):
@@ -120,15 +128,27 @@ class MainHandler(webapp2.RequestHandler):
         self.response.write(content.render())
 
 
-
-
 class InputHandler(webapp2.RequestHandler):
     def get(self):
         content = JINJA_ENV.get_template('templates/input.html')
-        self.response.write(content.render())
+        params={"pizza": 2, "name": 5}
+        self.response.write(content.render(params))
 
-    # def post(self):
-    #     content = JINJA_ENV.get_template('templates/input.html')
+    def post(self):
+        heat_usage = self.request.get('heating_usage')
+        print(heat_usage)
+        cold_usage = self.request.get('cooling_usage')
+        print(cold_usage)
+        light_usage = self.request.get('lighting_usage')
+        print(light_usage)
+        appliance_usage = self.request.get('appliance_usage')
+        print(appliance_usage)
+
+        self.response.write("Your total heat usage for this month is: " + str(heat_usage) + "\n" +
+        "The kw of energy you used this month for cooling is: " + str(cold_usage) + "\n" +
+        "The kw of energy you used this month for light is: " + str(light_usage) + "\n" +
+        "The kw of energy you used this month for appliances is: " + str(appliance_usage))
+
 
 
 
@@ -138,10 +158,10 @@ class LeaderboardHandler(webapp2.RequestHandler):
         self.response.write(content.render())
 
 
-
 app = webapp2.WSGIApplication([
   ('/', LoginHandler),
   ('/main', MainHandler),
   ('/input', InputHandler),
-  ('/leaderboard', LeaderboardHandler)
+  ('/leaderboard', LeaderboardHandler),
+  ('/logout', LogoutHandler)
 ], debug=True)

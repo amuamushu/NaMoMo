@@ -1,13 +1,14 @@
 <html>
-  <head>
-    <title>Input Data</title>
-    <link rel = "stylesheet" type = "text/css" href = "/css/input.css">
-  </head>
   <body>
-    <form method = "post">
-      <label>Hello</label>
-      <input type = "text" name = "cooling_usage">
-      <input type = "submit">
+    Hello {{ pizza }}
+    <h1> Please Enter the important Information <br></h1>
+
+    <form method="post" action="/input">
+      Heat Used: <input type="text" name="heating_usage"><br>
+      Cooling Used: <input type="text" name="cooling_usage"><br>
+      Light Used: <input type="text" name="lighting_usage"></br>
+      Appliance Used: <input type="text" name="appliance_usage"></br>
+      <input type="submit" value="Save Data"></input>
     </form>
   </body>
 </html>

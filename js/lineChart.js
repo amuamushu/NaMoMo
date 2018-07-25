@@ -1,15 +1,23 @@
+function send_line_request() {
+    let xmlHttp = new XMLHttpRequest();
+    console.log("sendind_request1");
+    xmlHttp.onreadystatechange =
+        function() {
+            if (xmlHttp.readyState === 4) {
+                let responseObject = JSON.parse(xmlHttp.responseText);
+                console.log("test")
+                drawLineChart(responseObject);
+            }
+        };
+    xmlHttp.open("GET", "/JSON", true);
+    xmlHttp.send();
+}
 
 google.charts.load('current', {'packages':['corechart']});
-      google.charts.setOnLoadCallback(drawLineChart);
+google.charts.setOnLoadCallback(() => {send_line_request()});
 // draws the line chart
-      function drawLineChart() {
-        var data = google.visualization.arrayToDataTable([
-          ['Month', 'Energy Usage (KW)'],
-          ['January', 400],
-          ['Feburary', 460],
-          ['March', 1120],
-          ['April', 540]
-        ]);
+      function drawLineChart(raw_line_data) {
+        var data = google.visualization.arrayToDataTable(raw_line_data['line']);
 
         var options = {
           title: 'Energy Usage',

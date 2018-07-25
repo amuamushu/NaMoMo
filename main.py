@@ -37,7 +37,6 @@ class LoginHandler(webapp2.RequestHandler):
     if user:
       email_address = user.nickname()
       cssi_user = CssiUser.get_by_id(user.user_id())
-      self.response.write(user.user_id())
       signout_link_html = '<a href="%s">sign out</a>' % (
           users.create_logout_url('/logout'))
       # If the user has previously been to our site, we greet them!
@@ -65,9 +64,16 @@ class LoginHandler(webapp2.RequestHandler):
     else:
       self.response.write('''
       <head><link rel = "stylesheet" type = "text/css" href = "css/login.css"></head>
-        <h1>Please log in to use our site!</h1> <br>
-        <button><a href="%s">Sign in</a></button>''' % (
+      <div class="login-page">
+      <div class="form">
+      <h2>Please log in or sign up using a Gmail account to use NaMoMo</h2>
+      <a href="%s"><button>login</button></a>
+
+        </div>
+        </div>''' % (
           users.create_login_url('/')))
+
+
 
   def post(self):
     user = users.get_current_user()
@@ -125,27 +131,54 @@ class InputHandler(webapp2.RequestHandler):
 class JSONHandler(webapp2.RequestHandler):
     def get(self):
         entries = Entry.query().filter(Entry.user_id == users.get_current_user().user_id()).fetch()
-        resultlist = [['Month', 'Heating', 'Cooling', 'Lights',
+        chart_data = {}
+        bar = [['Month', 'Heating', 'Cooling', 'Lights',
     'Appliance', { "role": 'annotation' } ]]
+        month_dictionary = {
+        "1": "January",
+         "2": "February",
+         "3": "March",
+         "4": "April",
+         "5": "May",
+         "6": "June",
+         "7": "July",
+         "8": "August",
+         "9": "September",
+         "10": "October",
+         "11": "November",
+         "12": "December"
+         }
         for entry in entries:
-            month_dictionary = {
-            "1": "January",
-             "2": "February",
-             "3": "March",
-             "4": "April",
-             "5": "May",
-             "6": "June",
-             "7": "July",
-             "8": "August",
-             "9": "September",
-             "10": "October",
-             "11": "November",
-             "12": "December"
-             }
             monthly_results = [month_dictionary[str(entry.date.month)], entry.heating_usage, entry.cooling_usage, entry.lighting_usage,
             entry.appliance_usage, '']
-            resultlist.append(monthly_results)
-        self.response.out.write(json.dumps(resultlist))
+            bar.append(monthly_results)
+        chart_data["bar"] = bar
+
+        month = "July"
+        pie = [['Energy Usage', 'Amount']]
+        for entry in entries:
+            if month_dictionary[str(entry.date.month)] == month:
+                pie.append(['Heating', entry.heating_usage])
+                pie.append(['Cooling', entry.cooling_usage])
+                pie.append(['Lighting', entry.lighting_usage])
+                pie.append(['Appliance', entry.appliance_usage])
+        chart_data["pie"] = pie
+
+        data_type = "heating_usage"
+        line = [['Month', 'Energy Usage (KW)']]
+        for entry in entries:
+            if data_type == "heating_usage":
+                line.append([month_dictionary[str(entry.date.month)], entry.heating_usage ])
+                type = "heati"
+            elif data_type == "cooling_usage":
+                line.append([month_dictionary[str(entry.date.month)], entry.cooling_usage ])
+            elif data_type == "lighting_usage":
+                line.append([month_dictionary[str(entry.date.month)], entry.lighting_usage ])
+            elif data_type == "appliance_usage":
+                line.append([month_dictionary[str(entry.date.month)], entry.appliance_usage])
+
+        chart_data["line"] = line
+        self.response.out.write(json.dumps(chart_data))
 
 #operates the leaderboard page, handing in savings as a parameter
 class LeaderboardHandler(webapp2.RequestHandler):

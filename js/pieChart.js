@@ -1,19 +1,25 @@
+function send_pie_request() {
+    let xmlHttp = new XMLHttpRequest();
+    console.log("sendind_request1");
+    xmlHttp.onreadystatechange =
+        function() {
+            if (xmlHttp.readyState === 4) {
+                let responseObject = JSON.parse(xmlHttp.responseText);
+                console.log("test")
+                drawPieChart(responseObject);
+            }
+        };
+    xmlHttp.open("GET", "/JSON", true);
+    xmlHttp.send();
+}
 
 
 google.charts.load('current', {'packages':['corechart']});
-google.charts.setOnLoadCallback(drawPieChart);
+google.charts.setOnLoadCallback(() => {send_pie_request()});
 
 // Draw the chart and set the chart values
-function drawPieChart() {
-  var data = google.visualization.arrayToDataTable([
-  ['Energy Usage', 'Amount'],
-  ['Heating', 8],
-  ['Water Heating', 2],
-  ['Cooling', 2],
-  ['Lights', 3],
-  ['Appliance', 2],
-  ['Electronics', 7]
-]);
+function drawPieChart(raw_pie_data) {
+  var data = google.visualization.arrayToDataTable(raw_pie_data['pie']);
 
   // Optional; add a title and set the width and height of the chart
   var options = {

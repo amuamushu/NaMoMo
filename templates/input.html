@@ -1,21 +1,35 @@
 <html>
   <head>
     <title>Input</title>
-  <body>
-    <h1> Please Enter the important Information <br></h1>
-
-    <form method="post" action="/input">
-      Heat Used: <input type="text" name="heating_usage"><br>
-      Cooling Used: <input type="text" name="cooling_usage"><br>
-      Light Used: <input type="text" name="lighting_usage"></br>
-      Appliance Used: <input type="text" name="appliance_usage"></br>
-      <input type="submit" value="Save Data" onclick = "loadDoc()"></input>
+    <link rel="stylesheet" type="text/css" href="css/input.css">
+  </head>
+    <body>
+      <div class="container">
+  <form id="contact" action="/input" method="post">
+    <h3>Please Enter Monthly Energy Usage </h3>
+    <fieldset>
+      <input name="heating_usage" placeholder="Heat Used: " type="text" tabindex="1" required autofocus>
+    </fieldset>
+    <fieldset>
+      <input name="cooling_usage" placeholder="Cooling Used: " type="text" tabindex="2" required>
+    </fieldset>
+    <fieldset>
+      <input name="lighting_usage" placeholder="Light Used: " type="text" tabindex="3" required>
+    </fieldset>
+    <fieldset>
+      <input name="appliance_usage" placeholder="Appliance Used:" type="text" tabindex="4" required>
+    </fieldset>
+  <!--  <p class="copyright">Designed by <a href="https://colorlib.com" target="_blank" title="Colorlib">Colorlib</a></p> -->
+    <input type="submit" value="Save Data" onclick = "loadDoc()"></input>
       <button type="reset">Reset the form</button>
-    </form>
-    {% if button == True %}
-    <form method="get" action="/main">
-    <button type="submit">Return</button>
-    </form>
-    {% endif %}
-  </body>
+      {% if button == True %}
+      <form method="get" action="/main">
+      <button type="submit">Return</button>
+      </form>
+      {% endif %}
+  </form>
+
+
+</div>
+</body>
 </html>

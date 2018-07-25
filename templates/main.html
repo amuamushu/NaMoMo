@@ -1,45 +1,17 @@
+
 <html>
 
   <head>
     <title>Your Usage</title>
-    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-    <script type="text/javascript">
-    function drawVisualization() {
-      // Create and populate the data table.
-      var data = google.visualization.arrayToDataTable([
-        ['Year', 'Austria', 'Bulgaria', 'Denmark', 'Greece'],
-        ['2003',  1336060,    400361,    1001582,   997974],
-        ['2004',  1538156,    366849,    1119450,   941795],
-        ['2005',  1576579,    440514,    993360,    930593],
-        ['2006',  1600652,    434552,    1004163,   897127],
-        ['2007',  1968113,    393032,    979198,    1080887],
-        ['2008',  1901067,    517206,    916965,    1056036]
-      ]);
-
-      // Create and draw the visualization.
-      new google.visualization.ColumnChart(document.getElementById('chart')).
-          draw(data,
-               {title:"Yearly Coffee Consumption by Country",
-                width:600, height:400,
-                vAxis: {title: "Year"}, isStacked: true,
-                hAxis: {title: "Cups"}}
-          );
-    }
-
-    google.load("visualization", "1", {packages:["corechart"]});
-    google.setOnLoadCallback(drawVisualization);
-
-
-
-
-      </script>
     <link rel = "stylesheet" type = "text/css" href = "/css/main.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet">
 
   </head>
 
   <body>
-    <script src = "http://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js"></script>
-    <script src = "js/data.js"></script>
+  <!--  <script src = "http://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js"></script>
+    <script src = "js/data.js"></script> -->
     <nav role='navigation'>
       <div id="menuToggle">
 
@@ -58,8 +30,48 @@
 
       </div>
     </nav>
-    <p>{{ heat }}</p>
-    <!-- <div id="chart" style="width: 900px; height: 500px;"></div> -->
-    <div id = "chart"></div>
+    <!--<p>{{ heat }}</p> -->
+    <div class="tab">
+  <button class="tablinks" onclick="openGraph(event, 'bar')"><i class="material-icons"> bar_chart</i>Bar graph</button>
+  <button class="tablinks" onclick="openGraph(event, 'pie')"><i class="material-icons"> pie_chart</i>Pie chart</button>
+  <button class="tablinks" onclick="openGraph(event, 'line')"><i class="material-icons"> show_chart</i>Line graph</button>
+</div>
+
+<script src = "https://www.gstatic.com/charts/loader.js"></script>
+<div id="bar" class="tabcontent">
+  <h3>Bar graph</h3>
+  <script src = "/js/barChart.js"></script>
+  <p id = "barchart"></p>
+</div>
+
+<div id="pie" class="tabcontent">
+  <h3>Pie chart</h3>
+  <script src = "/js/pieChart.js"></script>
+  <p id = "piechart"></p>
+</div>
+
+<div id="line" class="tabcontent">
+  <h3>Line graph</h3>
+  <script src = "/js/lineChart.js"></script>
+  <p id = "linechart"></p>
+</div>
+
+<script>
+function openGraph(evt, graphType) {
+    var i, tabcontent, tablinks;
+    tabcontent = document.getElementsByClassName("tabcontent");
+    for (i = 0; i < tabcontent.length; i++) {
+        tabcontent[i].style.display = "none";
+    }
+    tablinks = document.getElementsByClassName("tablinks");
+    for (i = 0; i < tablinks.length; i++) {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+    }
+    document.getElementById(graphType).style.display = "block";
+    evt.currentTarget.className += " active";
+}
+</script>
+  <!--  <div id="chart" style="width: 900px; height: 500px;"></div> -->
+  <!--  <div id = "chart"></div> -->
   </body>
 </html>

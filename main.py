@@ -1,34 +1,3 @@
-"""Simple example app to demonstrate storing info for users.
-
-CSSI-ers!  If you want to have users log in to your site and store
-info about them, here is a simple AppEngine app demonstrating
-how to do that.  The typical usage is:
-
-- First, user visits the site, and sees a message to log in.
-- The user follows the link to the Google login page, and logs in.
-- The user is redirected back to your app's signup page to sign
-  up.
-- The user then gets a page thanking them for signup.
-
-- In the future, whenever the user is logged in, they'll see a
-  message greeting them by name.
-
-Try logging out and logging back in with a fake email address
-to create a different account (when you "log in" running your
-local server, it doesn't ask for a password, and you can make
-up whatever email you like).
-
-The key piece that makes all of this work is tying the datastore
-entity to the AppEngine user id, by passing the special property
-id when creating the datastore entity.
-
-cssi_user = CssiUser(..., id=user.user_id())
-cssi_user.put()
-
-and then, looking it up later by doing
-
-cssi_user = CssiUser.get_by_id(user.user_id())
-"""
 import json
 import webapp2
 import jinja2
@@ -39,17 +8,19 @@ import logging
 from google.appengine.api import users
 from google.appengine.ext import ndb
 
+#defines the Jinja2 environment
 JINJA_ENV = jinja2.Environment(
     loader = jinja2.FileSystemLoader(os.path.dirname(__file__)),
     extensions = ['jinja2.ext.autoescape'],
     autoescape = True
 )
 
+#defines what properties a user will have once they sign in
 class CssiUser(ndb.Model):
   first_name = ndb.StringProperty()
   last_name = ndb.StringProperty()
 
- # usage_date = ndb.dictionary
+#defines what properties a monthly usage entry will have
 class Entry(ndb.Model):
     date = ndb.DateProperty()
     heating_usage = ndb.IntegerProperty()
@@ -95,7 +66,7 @@ class LoginHandler(webapp2.RequestHandler):
       self.response.write('''
       <head><link rel = "stylesheet" type = "text/css" href = "css/login.css"></head>
         <h1>Please log in to use our site!</h1> <br>
-        <button><a href="%s">Sign in</a></button><img src = "/css/welcome.gif">''' % (
+        <button><a href="%s">Sign in</a></button>''' % (
           users.create_login_url('/')))
 
   def post(self):
@@ -123,17 +94,14 @@ class LogoutHandler(webapp2.RequestHandler):
             self.redirect(signout_link_html)
 
 
-
+#gets all user entries and runs main page
 class MainHandler(webapp2.RequestHandler):
     def get(self):
         content = JINJA_ENV.get_template('templates/main.html')
         entries = Entry.query().filter(Entry.user_id == users.get_current_user().user_id()).fetch()
-        heat = ""
-        for i in entries:
-            heat += "   " +str(i.heating_usage)
-        self.response.write(content.render(heat = heat))
+        self.response.write(content.render())
 
-
+#runs input page and saves data from the user to the datastore
 class InputHandler(webapp2.RequestHandler):
     def get(self):
         content = JINJA_ENV.get_template('templates/input.html')
@@ -150,28 +118,36 @@ class InputHandler(webapp2.RequestHandler):
         user_id = users.get_current_user().user_id()
         )
         entry.put()
-
         content = JINJA_ENV.get_template('templates/input.html')
         self.response.write(content.render(button = True))
 
-
+#sends JSON to the server to put in the JS
 class JSONHandler(webapp2.RequestHandler):
     def get(self):
         entries = Entry.query().filter(Entry.user_id == users.get_current_user().user_id()).fetch()
-        resultlist = []
+        resultlist = [['Month', 'Heating', 'Cooling', 'Lights',
+    'Appliance', { "role": 'annotation' } ]]
         for entry in entries:
-            monthly_results = {
-            'month': entry.date.month,
-            'Heating':entry.heating_usage,
-            'WaterHeating':0,
-            'Cooling':entry.cooling_usage,
-            'Lights':entry.lighting_usage,
-            'Appliance':entry.appliance_usage,
-            'Electronics':0
-            }
+            month_dictionary = {
+            "1": "January",
+             "2": "February",
+             "3": "March",
+             "4": "April",
+             "5": "May",
+             "6": "June",
+             "7": "July",
+             "8": "August",
+             "9": "September",
+             "10": "October",
+             "11": "November",
+             "12": "December"
+             }
+            monthly_results = [month_dictionary[str(entry.date.month)], entry.heating_usage, entry.cooling_usage, entry.lighting_usage,
+            entry.appliance_usage, '']
             resultlist.append(monthly_results)
+        self.response.out.write(json.dumps(resultlist))
 
-
+#operates the leaderboard page, handing in savings as a parameter
 class LeaderboardHandler(webapp2.RequestHandler):
     def get(self):
         content = JINJA_ENV.get_template('templates/leaderboard.html')

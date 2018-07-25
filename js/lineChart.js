@@ -13,6 +13,10 @@ google.charts.load('current', {'packages':['corechart']});
 
         var options = {
           title: 'Energy Usage',
+             backgroundColor: 'transparent',
+             colors: ['#7851a9'],
+             'width': 1000,
+             'height': 750,
           //curveType: 'function', <-- made graph curvy
           legend: { position: 'top' }
         };

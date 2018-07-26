@@ -34,6 +34,7 @@
       <button class="tablinks" onclick="openGraph(event, 'pie')"><i class="material-icons"> pie_chart</i>Monthly Usage Breakdown</button>
       <button class="tablinks" onclick="openGraph(event, 'line')"><i class="material-icons"> show_chart</i>Usage by Category</button>
       <button class="tablinks about" onclick="openGraph(event, 'about')"><i class="material-icons">info</i>About</button>
+      <button class="tablinks" onclick="openGraph(event, 'log')"><i class="material-icons">list</i>Entry Log</button>
     </div>
 
 <!-- Defines content of each tab -->
@@ -49,13 +50,21 @@
 
     <div id="pie" class="tabcontent">
       <h1 align = "center">Monthly Usage Breakdown</h1>
-      <div>
+      <div align = "center">
         <label>Select month: &nbsp</label>
         <select id = "monthlist" name="monthlist" form="monthform">
+          <option value="January">January</option>
+          <option value="February">February</option>
+          <option value="March">March</option>
+          <option value="April">April</option>
+          <option value="May">May</option>
+          <option value="June">June</option>
           <option value="July">July</option>
           <option value="August">August</option>
           <option value="September">September</option>
           <option value="October">October</option>
+          <option value="November">November</option>
+          <option value="December">December</option>
         </select>
         <button id = "changeMonth" >submit</button>
     </div>
@@ -66,11 +75,23 @@
       <p id = "pielist">
     </div>
 
+
     <div id="line" class="tabcontent">
-      <h1 align = "center">Breakdown of type_ Usage by Month</h1>
+      <h1 align = "center">Breakdown of  type  Usage by Month</h1>
+      <div align = "center">
+        <label>Select usage type: &nbsp</label>
+        <select id = "type_list" name="typelist" form="typeform">
+          <option value="heating_usage">Heating usage</option>
+          <option value="cooling_usage">Cooling usage</option>
+          <option value="lighting_usage">Lighting usage</option>
+          <option value="appliance_usage">Appliance usage</option>
+        </select>
+        <button id = "changeType" >submit</button>
+    </div>
       <script src = "/js/lineChart.js"></script>
       <p align = "center" id = "linechart"></p>
     </div>
+
 
     <div id="about" class="tabcontent">
       <meta charset="utf-8">
@@ -81,8 +102,9 @@
       <link href="https://fonts.googleapis.com/css?family=Sunflower:500" rel="stylesheet">
     </div>
 
-
-
+    <div id="log" class="tabcontent">
+      <h1 align = "center">Entry Log</h1>
+    </div>
 
 <!-- controls the opening of tabs -->
     <script>
@@ -101,6 +123,8 @@
     }
     </script>
 
+
+<!-- This is the about page! -->
     <div class="jumbotron text-center">
       <h1>About The Creators</h1>
       <p>Learn some more about the parts that make NaMoMo real</p>

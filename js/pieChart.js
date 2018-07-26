@@ -7,7 +7,7 @@ function send_pie_request(month) {
                 drawPieChart(responseObject);
             }
         };
-    xmlHttp.open("GET", "/JSON?month=" + month, true);
+    xmlHttp.open("GET", "/JSONmain?month=" + month, true);
     xmlHttp.send();
 }
 

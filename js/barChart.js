@@ -10,7 +10,7 @@ function send_bar_request() {
                 drawBarChart(responseObject);
             }
         };
-    xmlHttp.open("GET", "/JSON", true);
+    xmlHttp.open("GET", "/JSONmain", true);
     xmlHttp.send();
 }
 
@@ -37,7 +37,7 @@ function drawBarChart(raw_bar_data) {
             hAxis: {title: "Month"}}
       );
 
-  //TIPS    
+  //TIPS
   //gets the most recent total for the bar graph
   let mostRecentTotal =0;
   for (i = 1; i < raw_bar_data['bar'][1].length-1; i++){

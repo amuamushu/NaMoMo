@@ -20,6 +20,8 @@ JINJA_ENV = jinja2.Environment(
 class CssiUser(ndb.Model):
   first_name = ndb.StringProperty()
   last_name = ndb.StringProperty()
+  userrid = ndb.StringProperty()
+
 
 #defines what properties a monthly usage entry will have
 class Entry(ndb.Model):
@@ -30,6 +32,12 @@ class Entry(ndb.Model):
     lighting_usage = ndb.IntegerProperty()
     appliance_usage = ndb.IntegerProperty()
     user_id = ndb.StringProperty()
+
+class LeaderboardEntry(ndb.Model):
+    user_id = ndb.StringProperty()
+    first_name = ndb.StringProperty()
+    score = ndb.IntegerProperty()
+
 
 
 class LoginHandler(webapp2.RequestHandler):
@@ -53,15 +61,19 @@ class LoginHandler(webapp2.RequestHandler):
       # If the user hasn't been to our site, we ask them to sign up
       else:
         self.response.write('''
-            Welcome to our site, %s!  Please sign up! <br>
-            <form method="post" action="/">
-            <label>First name: &nbsp</label>
-            <input type="text" name="first_name">
-            <label>Last name: &nbsp</label>
-            <input type="text" name="last_name">
+        <head><link rel = "stylesheet" type = "text/css" href = "css/login.css"></head>
+        <div class = "login-page">
+        <div class = "form">
+            <h1>Welcome to our site, %s! Please Sign up!</h1>
+            <form method="post" action="/" class="login-form">
+            <input type="text" placeholder="First Name:" name="first_name">
+            <input type="text" placeholder="Last Name:" name="last_name">
             <input type="submit">
             </form><br> %s <br>
+            </div>
+            </div>
             ''' % (email_address, signout_link_html))
+
     # Otherwise, the user isn't logged in!
     else:
       self.response.write('''
@@ -86,10 +98,11 @@ class LoginHandler(webapp2.RequestHandler):
     cssi_user = CssiUser(
         first_name=self.request.get('first_name'),
         last_name=self.request.get('last_name'),
-        id=user.user_id())
+        id=user.user_id(),
+        userrid= user.user_id())
+
     cssi_user.put()
-    self.response.write('Thanks for signing up, %s!' %
-        cssi_user.first_name)
+    self.redirect('/main')
 
 
 class LogoutHandler(webapp2.RequestHandler):
@@ -116,33 +129,25 @@ class InputHandler(webapp2.RequestHandler):
         self.response.write(content.render())
 
     def post(self):
-        heating_usage = self.request.get('heating_usage')
-        cooling_usage = self.request.get('cooling_usage')
-        lighting_usage = self.request.get('lighting_usage')
-        appliance_usage = self.request.get('appliance_usage')
+        heating_usage = int(self.request.get('heating_usage'))
+        cooling_usage = int(self.request.get('cooling_usage'))
+        lighting_usage = int(self.request.get('lighting_usage'))
+        appliance_usage = int(self.request.get('appliance_usage'))
         date = self.request.get('date')
         month = date[5:7]
 
         #queries for entries in the recently inputted month
         entries = Entry.query().filter(Entry.user_id == users.get_current_user().user_id())
         this_month_entries = entries.filter(Entry.month == month).fetch()
-
         #if there's already an input for this month, it updates. if not, it makes a new entry
         if len(this_month_entries) != 0:
             this_month_data = this_month_entries[0]
-            entry = Entry(
-            heating_usage = int(heating_usage) + this_month_data.heating_usage,
-            cooling_usage = int(cooling_usage) + this_month_data.cooling_usage,
-            lighting_usage = int(lighting_usage) + this_month_data.lighting_usage,
-            appliance_usage = int(appliance_usage) + this_month_data.appliance_usage,
-            date = this_month_data.date + "," + str(date),
-            month = month,
-            user_id = users.get_current_user().user_id()
-            )
+            heating_usage += this_month_data.heating_usage
+            cooling_usage += this_month_data.cooling_usage
+            lighting_usage += this_month_data.lighting_usage
+            appliance_usage += this_month_data.appliance_usage
             this_month_data.key.delete()
-            entry.put()
-        else:
-            entry = Entry(
+        entry = Entry(
             heating_usage = int(heating_usage),
             cooling_usage = int(cooling_usage),
             lighting_usage = int(lighting_usage),
@@ -150,14 +155,34 @@ class InputHandler(webapp2.RequestHandler):
             date = str(date),
             month = month,
             user_id = users.get_current_user().user_id()
+        )
+        entry.put()
+        previous_month = "06"
+        current_month = "07"
+
+        if (entry.month == current_month) and (len(Entry.query().filter(Entry.month == previous_month).fetch()) > 0):
+            entries = Entry.query().filter(Entry.user_id == users.get_current_user().user_id())
+            this_month = entry
+            last_month = entries.filter(Entry.month == previous_month).fetch()[0]
+            total_this = this_month.heating_usage + this_month.cooling_usage + this_month.lighting_usage + this_month.appliance_usage
+            total_last = last_month.heating_usage + last_month.cooling_usage + last_month.lighting_usage + last_month.appliance_usage
+            score = total_last - total_this
+            print(score)
+            user_id = users.get_current_user().user_id()
+            first_name = CssiUser.query().filter(CssiUser.userrid == user_id).fetch()[0].first_name
+            print(first_name)
+            leaderboard_entry = LeaderboardEntry(
+            user_id = user_id,
+            first_name = first_name,
+            score = score
             )
-            entry.put()
+            leaderboard_entry.put()
 
         content = JINJA_ENV.get_template('templates/input.html')
         self.response.write(content.render())
 
 #sends JSON to the server to put in the JS
-class JSONHandler(webapp2.RequestHandler):
+class JSONMainHandler(webapp2.RequestHandler):
     def get(self):
         entries = Entry.query().filter(Entry.user_id == users.get_current_user().user_id()).fetch()
         month_dictionary = {
@@ -201,25 +226,26 @@ class JSONHandler(webapp2.RequestHandler):
         chart_data["pie"] = pie
 
         #creates data to be sent for line graph
-        data_type = "heating_usage"
+        data_type = self.request.get("type")
         line = []
         for entry in entries:
             if data_type == "heating_usage":
                 line.append([int(entry.month), month_dictionary[entry.month], entry.heating_usage ])
-                type = "heating_usage"
+                data_type = "heating_usage"
             elif data_type == "cooling_usage":
                 line.append([int(entry.month), month_dictionary[entry.month], entry.cooling_usage ])
+                data_type = "cooling_usage"
             elif data_type == "lighting_usage":
                 line.append([int(entry.month), month_dictionary[entry.month], entry.lighting_usage ])
+                data_type = "lighting_usage"
             elif data_type == "appliance_usage":
                 line.append([int(entry.month), month_dictionary[entry.month], entry.appliance_usage])
+                data_type = "appliance_usage"
 
         #sorts by month
         line = sorted(line, key=itemgetter(0))
-        print(line)
         for item in line:
             item.pop(0)
-        print(line)
         line.insert(0,['Month', 'Energy Usage (KW)'])
         chart_data["line"] = line
 
@@ -231,6 +257,12 @@ class LeaderboardHandler(webapp2.RequestHandler):
         content = JINJA_ENV.get_template('templates/leaderboard.html')
         self.response.write(content.render())
 
+class JSONLeaderboardHandler(webapp2.RequestHandler):
+    def get(self):
+        current_month = "July"
+        last_month = "June"
+        users = LeaderboardEntry.query().filter(LeaderboardEntry.score)
+
 
 app = webapp2.WSGIApplication([
   ('/', LoginHandler),
@@ -238,5 +270,7 @@ app = webapp2.WSGIApplication([
   ('/input', InputHandler),
   ('/leaderboard', LeaderboardHandler),
   ('/logout', LogoutHandler),
-  ('/JSON', JSONHandler)
+  ('/JSONmain', JSONMainHandler),
+  ('/JSONleaderboard', JSONLeaderboardHandler)
+
 ], debug=True)

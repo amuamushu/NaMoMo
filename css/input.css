@@ -29,7 +29,8 @@ body {
   position: relative;
 }
 
-#contact input[type="text"],
+#contact input[type="number"],
+#contact input[type="date"],
 #contact input[type="email"],
 #contact input[type="tel"],
 #contact input[type="url"],
@@ -67,7 +68,8 @@ fieldset {
   width: 100%;
 }
 
-#contact input[type="text"],
+#contact input[type="number"],
+#contact input[type="date"],
 #contact input[type="email"],
 #contact input[type="tel"],
 #contact input[type="url"],
@@ -79,9 +81,10 @@ fieldset {
   padding: 10px;
 }
 
-#contact input[type="text"]:hover,
+#contact input[type="number"]:hover,
 #contact input[type="email"]:hover,
 #contact input[type="tel"]:hover,
+#contact input[type="date"]:hover,
 #contact input[type="url"]:hover,
 #contact textarea:hover {
   -webkit-transition: border-color 0.3s ease-in-out;

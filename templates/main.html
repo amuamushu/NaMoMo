@@ -4,6 +4,7 @@
     <link rel = "stylesheet" type = "text/css" href = "/css/main.css">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
       rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   </head>
 
   <body>
@@ -38,17 +39,31 @@
 <!-- Defines content of each tab -->
     <script src = "https://www.gstatic.com/charts/loader.js"></script>
     <div id="bar" class="tabcontent">
-      <h1 align = "center">Total Usage per Month</h1>
-
+      <h1 align = "center">Bar graph</h1>
       <script src = "/js/barChart.js"></script>
       <p align = "center" id = "barchart"></p>
-      <h3 align = "center" id = "bartips"></h3>
+      <p id = "bardiff"></p>
+      </p>
     </div>
+
 
     <div id="pie" class="tabcontent">
       <h1 align = "center">Monthly Usage Breakdown</h1>
+      <div>
+        <label>Select month: &nbsp</label>
+        <select id = "monthlist" name="monthlist" form="monthform">
+          <option value="July">July</option>
+          <option value="August">August</option>
+          <option value="September">September</option>
+          <option value="October">October</option>
+        </select>
+        <button id = "changeMonth" >submit</button>
+    </div>
       <script src = "/js/pieChart.js"></script>
       <p align = "center" id = "piechart"></p>
+      <h3 align = "center" id = "pietips"></h3>
+      <h4 align = "center" id = "piediff"></h4>
+      <p id = "pielist">
     </div>
 
     <div id="line" class="tabcontent">
@@ -58,8 +73,12 @@
     </div>
 
     <div id="about" class="tabcontent">
-      <h1 align = "center">About Us</h1>
-      <p align = "center" id = "linechart">hi</p>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+      <link rel="stylesheet" href="css/about.css">
+      <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+      <link href="https://fonts.googleapis.com/css?family=Sunflower:500" rel="stylesheet">
     </div>
 
 
@@ -81,5 +100,56 @@
         evt.currentTarget.className += " active";
     }
     </script>
+
+    <div class="jumbotron text-center">
+      <h1>About The Creators</h1>
+      <p>Learn some more about the parts that make NaMoMo real</p>
+    </div>
+
+    <div class="container">
+      <div class="row">
+        <div class="col-sm-4">
+          <h3>Na</h3>
+          <p>Amy Nguyen</p>
+          <img src="css/AN2.jpg" class="img-responsive" alt="Amy Nguyen">
+          <p>Amy is our JavaScript master!
+            Not only has she probably searched the entire library by now,
+            she also dables in formatting especially through color schemes. In her freetime,
+            Amy likes to watch youtube channels like Ryan Higa(Nigahiga).</p>
+        </div>
+        <div class="col-sm-4">
+          <h3>MM</h3>
+          <p>Matthew Merck</p>
+          <img src="css/MM2.jpg" class="img-responsive" alt="Matthew Merck">
+          <p>Matthew is the one to go to for python.
+            Not only did he write well over 1,000  lines of code, he did it with a smile!
+            If you ever need a bingo partner, he's your guy!</p>
+        </div>
+        <div class="col-sm-4">
+          <h3>OO</h3>
+          <p>Oreoluwa Odeyinka</p>
+          <img src="css/OO.jpg" class="img-responsive" alt="Oreoluwa Odeyinka">
+          <p>Oreoluwa is all up in that CSS. She likes to make things that are functional yet beautiful.
+          Her specialties include team meetings at least twice a day and always going to lunch on time.
+          In her fretime she likes to watch youtube videos as well especially Jackie Aina's page.
+          </p>
+        </div>
+      </div>
+      <div>
+        <h3><center>Our Story</center></h3>
+        <p>
+          NaMoMo is a sustainability app that helps people track energy usage and in turn save money.
+          It was inspired by the group's understanding of the importance of environmental protection
+          and Oreoluwa's hometown that does the same thing except on paper.
+          Each month when the electric company sends the biil, it also sends a breakdown showing
+          what appliances were most used, how it compares to the last month and how you compare to your neighbors.
+          It's the 21st century though, and we thought what better way to do this than to build an app
+          that lets you take control of that information. It is our hope that we
+          can partner with electric companies in order to recieve the data from them and then show people
+          in real time what their electricity usage is.
+        </p>
+      </div>
+    </div>
+
   </body>
 </html>

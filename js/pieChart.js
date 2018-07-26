@@ -1,21 +1,26 @@
-function send_pie_request() {
+function send_pie_request(month) {
     let xmlHttp = new XMLHttpRequest();
-    console.log("sendind_request1");
     xmlHttp.onreadystatechange =
         function() {
             if (xmlHttp.readyState === 4) {
                 let responseObject = JSON.parse(xmlHttp.responseText);
-                console.log("test")
                 drawPieChart(responseObject);
             }
         };
-    xmlHttp.open("GET", "/JSON", true);
+    xmlHttp.open("GET", "/JSON?month=" + month, true);
     xmlHttp.send();
 }
 
+//gets month from main.html
+document.getElementById("changeMonth").addEventListener("click", function(){
+    let month = document.getElementById("monthlist").value;
+    send_pie_request(month);
+});
 
 google.charts.load('current', {'packages':['corechart']});
-google.charts.setOnLoadCallback(() => {send_pie_request()});
+
+//default month is July
+google.charts.setOnLoadCallback(() => {send_pie_request("July")});
 
 // Draw the chart and set the chart values
 function drawPieChart(raw_pie_data) {
@@ -34,4 +39,50 @@ function drawPieChart(raw_pie_data) {
   // Display the chart inside the <div> element with id="piechart"
   var chart = new google.visualization.PieChart(document.getElementById('piechart'));
   chart.draw(data, options);
+
+  //TIPS
+  var heatingTips = ["Install a programmable thermostat to save up to 10% on cooling and heating costs",
+    "Use your window shades. Close blinds on the sunny side in summer to keep out the hot sun, and open them in winter to bring in warm rays.",
+    "Seal air leaks and properly insulate to save up to 20% on heating and cooling bills",
+    "Reduce water heater temperature to 130° F to save energy and money on heating water; and wrap the water storage tank in a specially-designed “blanket” to retain the heat."];
+  var coolingTips = ["Clean or change filters regularly. A dirty A/C filter will slow down air flow and make the system work harder to keep you warm or cool.",
+    "Install a programmable thermostat to save up to 10% on cooling and heating costs"];
+  var lightingTips = ["Change to new and improved light bulbs. Reduce energy use from about a third to as much as 80% with today’s increasing number of energy-efficient halogen incandescents, CFLs and LEDs.",
+    "Install dimmers to reduce the amount of electricity a light uses and increases the life of low-voltage lighting such as halogen downlights.",
+    "Use an electrical lamp to give you ample light at a lower cost than an overhead light",
+    "Keep lightbulbs dustfree and lampshades clean to prevent light from gettin obstructed."];
+  var applianceTips = ["Wash clothes in cold water to save $63 a year", "Turn off all lights, appliances and electronics not in use. A power strip can help turn off multiple items at once."];
+  var tipsList = "";
+//creates an array of the inputs of one entry
+  var oneEntry = [];
+  for (a = 1; a < 5; a++){
+    oneEntry.push(raw_pie_data['pie'][a][1]);
+  }
+  //finds the max input in one entry
+  var maxOneEntry = Math.max.apply(null, oneEntry);
+  //sees which item in one entry that the max value equals to
+  if (raw_pie_data['pie'][1][1] === maxOneEntry){ //change the first one in array to get heat/cool/light
+    document.getElementById("pietips").innerHTML= "Heating Tips!";
+    document.getElementById("piediff").innerHTML= "Wowzers! You used " + raw_pie_data['pie'][1][1] + " Kilowatts of heating. Here are some helpful tips to help you save on heating.";
+    listTips(heatingTips);
+  } else if (raw_pie_data['pie'][2][1] === maxOneEntry) {
+    document.getElementById("pietips").innerHTML= "Cooling Tips!";
+    document.getElementById("piediff").innerHTML= "Oh snap! You used " + raw_pie_data['pie'][2][1] + " Kilowatts of cooling. Here are some helpful tips to help you save on cooling.";
+    listTips(coolingTips);
+  } else if (raw_pie_data['pie'][3][1] === maxOneEntry) {
+    document.getElementById("pietips").innerHTML= "Lighting Tips!";
+    document.getElementById("piediff").innerHTML= "Wowzers! You used " + raw_pie_data['pie'][3][1] + " Kilowatts of lighting. Here are some helpful tips to help you save on lighting.";
+    listTips(lightingTips);
+  } else if (raw_pie_data['pie'][4][1] === maxOneEntry) {
+    document.getElementById("pietips").innerHTML= "Appliance Tips!";
+    document.getElementById("piediff").innerHTML= "Woah! You used " + raw_pie_data['pie'][4][1] + " Kilowatts of appliance energy. Here are some helpful tips to help you save on appliance usage.";
+    listTips(applianceTips);
+  }
+}
+
+function listTips(category){
+  for (var a = 0; a < (category.length); a++) {
+      tipsList = "<li>" + (category[a]) + "</li>";
+      document.getElementById("pielist").innerHTML += tipsList;
+  }
 }

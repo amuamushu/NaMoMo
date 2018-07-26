@@ -4,6 +4,7 @@ import jinja2
 import os
 import datetime
 import logging
+from operator import itemgetter
 
 from google.appengine.api import users
 from google.appengine.ext import ndb
@@ -151,7 +152,7 @@ class InputHandler(webapp2.RequestHandler):
             user_id = users.get_current_user().user_id()
             )
             entry.put()
-            
+
         content = JINJA_ENV.get_template('templates/input.html')
         self.response.write(content.render())
 
@@ -159,9 +160,6 @@ class InputHandler(webapp2.RequestHandler):
 class JSONHandler(webapp2.RequestHandler):
     def get(self):
         entries = Entry.query().filter(Entry.user_id == users.get_current_user().user_id()).fetch()
-        chart_data = {}
-        bar = [['Month', 'Heating', 'Cooling', 'Lights',
-    'Appliance', { "role": 'annotation' } ]]
         month_dictionary = {
         "01": "January",
          "02": "February",
@@ -177,14 +175,22 @@ class JSONHandler(webapp2.RequestHandler):
          "12": "December"
          }
         #creates data to be sent for the bar graph
+        chart_data = {}
+        bar = []
         for entry in entries:
-            monthly_results = [month_dictionary[entry.month], entry.heating_usage, entry.cooling_usage, entry.lighting_usage,
+            monthly_results = [int(entry.month), month_dictionary[entry.month], entry.heating_usage, entry.cooling_usage, entry.lighting_usage,
             entry.appliance_usage, '']
             bar.append(monthly_results)
+        #sorts by month
+        bar = sorted(bar, key=itemgetter(0))
+        for item in bar:
+            item.pop(0)
+        bar.insert(0,['Month', 'Heating', 'Cooling', 'Lights',
+    'Appliance', { "role": 'annotation' } ])
         chart_data["bar"] = bar
 
         #creates data to be sent for pie chart
-        month = "July"
+        month = self.request.get("month")
         pie = [['Energy Usage', 'Amount']]
         for entry in entries:
             if month_dictionary[entry.month] == month:
@@ -196,18 +202,26 @@ class JSONHandler(webapp2.RequestHandler):
 
         #creates data to be sent for line graph
         data_type = "heating_usage"
-        line = [['Month', 'Energy Usage (KW)']]
+        line = []
         for entry in entries:
             if data_type == "heating_usage":
-                line.append([month_dictionary[entry.month], entry.heating_usage ])
+                line.append([int(entry.month), month_dictionary[entry.month], entry.heating_usage ])
                 type = "heating_usage"
             elif data_type == "cooling_usage":
-                line.append([month_dictionary[entry.month], entry.cooling_usage ])
+                line.append([int(entry.month), month_dictionary[entry.month], entry.cooling_usage ])
             elif data_type == "lighting_usage":
-                line.append([month_dictionary[entry.month], entry.lighting_usage ])
+                line.append([int(entry.month), month_dictionary[entry.month], entry.lighting_usage ])
             elif data_type == "appliance_usage":
-                line.append([month_dictionary[entry.month], entry.appliance_usage])
-            chart_data["line"] = line
+                line.append([int(entry.month), month_dictionary[entry.month], entry.appliance_usage])
+
+        #sorts by month
+        line = sorted(line, key=itemgetter(0))
+        print(line)
+        for item in line:
+            item.pop(0)
+        print(line)
+        line.insert(0,['Month', 'Energy Usage (KW)'])
+        chart_data["line"] = line
 
         self.response.out.write(json.dumps(chart_data))
 

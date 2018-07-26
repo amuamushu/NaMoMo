@@ -3,7 +3,9 @@
     <title>Input</title>
     <link rel="stylesheet" type="text/css" href="css/input.css">
   </head>
-    <body>
+
+  <body>
+    <!-- hamburger bar -->
       <nav role='navigation'>
         <div id="menuToggle">
 
@@ -23,31 +25,29 @@
           </ul>
 
         </div>
-      </nav>  
+      </nav>
 
+<!-- FORM -->
       <div class="container">
   <form id="contact" action="/input" method="post">
     <h3>Please Enter Monthly Energy Usage </h3>
     <fieldset>
-      <input name="heating_usage" placeholder="KwH Heating: " type="text" tabindex="1" required autofocus>
+      <input name="heating_usage" placeholder="KwH Heating: " type="number" tabindex="1" required autofocus min ="0">
     </fieldset>
     <fieldset>
-      <input name="cooling_usage" placeholder="KwH Cooling: " type="text" tabindex="2" required>
+      <input name="cooling_usage" placeholder="KwH Cooling: " type="number" tabindex="2" required min ="0">
     </fieldset>
     <fieldset>
-      <input name="lighting_usage" placeholder="KwH Lighting: " type="text" tabindex="3" required>
+      <input name="lighting_usage" placeholder="KwH Lighting: " type="number" tabindex="3" required min ="0">
     </fieldset>
     <fieldset>
-      <input name="appliance_usage" placeholder="Kwh Appliances: " type="text" tabindex="4" required>
+      <input name="appliance_usage" placeholder="Kwh Appliances: " type="number" tabindex="4" required min ="0">
     </fieldset>
-  <!--  <p class="copyright">Designed by <a href="https://colorlib.com" target="_blank" title="Colorlib">Colorlib</a></p> -->
+    <fieldset>
+      <input name = "date" placeholder = "mm/dd/yyyy" type = "date" tabindex = "5" required>
+    </fieldset>
     <input type="submit" value="Save Data" onclick = "loadDoc()"></input>
-      <button type="reset">Reset the form</button>
-      {% if button == True %}
-      <form method="get" action="/main">
-      <button type="submit">Return</button>
-      </form>
-      {% endif %}
+      <button id = "resetform" type="reset">Reset the form</button>
   </form>
 
 

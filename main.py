@@ -22,7 +22,8 @@ class CssiUser(ndb.Model):
 
 #defines what properties a monthly usage entry will have
 class Entry(ndb.Model):
-    date = ndb.DateProperty()
+    date = ndb.StringProperty()
+    month = ndb.StringProperty()
     heating_usage = ndb.IntegerProperty()
     cooling_usage = ndb.IntegerProperty()
     lighting_usage = ndb.IntegerProperty()
@@ -114,18 +115,45 @@ class InputHandler(webapp2.RequestHandler):
         self.response.write(content.render())
 
     def post(self):
-        button = False
-        entry = Entry(
-        heating_usage = int(self.request.get('heating_usage')),
-        cooling_usage = int(self.request.get('cooling_usage')),
-        lighting_usage = int(self.request.get('lighting_usage')),
-        appliance_usage = int(self.request.get('appliance_usage')),
-        date = datetime.datetime.strptime("07/24/2018", "%m/%d/%Y").date(),
-        user_id = users.get_current_user().user_id()
-        )
-        entry.put()
+        heating_usage = self.request.get('heating_usage')
+        cooling_usage = self.request.get('cooling_usage')
+        lighting_usage = self.request.get('lighting_usage')
+        appliance_usage = self.request.get('appliance_usage')
+        date = self.request.get('date')
+        month = date[5:7]
+
+        #queries for entries in the recently inputted month
+        entries = Entry.query().filter(Entry.user_id == users.get_current_user().user_id())
+        this_month_entries = entries.filter(Entry.month == month).fetch()
+
+        #if there's already an input for this month, it updates. if not, it makes a new entry
+        if len(this_month_entries) != 0:
+            this_month_data = this_month_entries[0]
+            entry = Entry(
+            heating_usage = int(heating_usage) + this_month_data.heating_usage,
+            cooling_usage = int(cooling_usage) + this_month_data.cooling_usage,
+            lighting_usage = int(lighting_usage) + this_month_data.lighting_usage,
+            appliance_usage = int(appliance_usage) + this_month_data.appliance_usage,
+            date = this_month_data.date + "," + str(date),
+            month = month,
+            user_id = users.get_current_user().user_id()
+            )
+            this_month_data.key.delete()
+            entry.put()
+        else:
+            entry = Entry(
+            heating_usage = int(heating_usage),
+            cooling_usage = int(cooling_usage),
+            lighting_usage = int(lighting_usage),
+            appliance_usage = int(appliance_usage),
+            date = str(date),
+            month = month,
+            user_id = users.get_current_user().user_id()
+            )
+            entry.put()
+            
         content = JINJA_ENV.get_template('templates/input.html')
-        self.response.write(content.render(button = True))
+        self.response.write(content.render())
 
 #sends JSON to the server to put in the JS
 class JSONHandler(webapp2.RequestHandler):
@@ -135,49 +163,52 @@ class JSONHandler(webapp2.RequestHandler):
         bar = [['Month', 'Heating', 'Cooling', 'Lights',
     'Appliance', { "role": 'annotation' } ]]
         month_dictionary = {
-        "1": "January",
-         "2": "February",
-         "3": "March",
-         "4": "April",
-         "5": "May",
-         "6": "June",
-         "7": "July",
-         "8": "August",
-         "9": "September",
+        "01": "January",
+         "02": "February",
+         "03": "March",
+         "04": "April",
+         "05": "May",
+         "06": "June",
+         "07": "July",
+         "08": "August",
+         "09": "September",
          "10": "October",
          "11": "November",
          "12": "December"
          }
+        #creates data to be sent for the bar graph
         for entry in entries:
-            monthly_results = [month_dictionary[str(entry.date.month)], entry.heating_usage, entry.cooling_usage, entry.lighting_usage,
+            monthly_results = [month_dictionary[entry.month], entry.heating_usage, entry.cooling_usage, entry.lighting_usage,
             entry.appliance_usage, '']
             bar.append(monthly_results)
         chart_data["bar"] = bar
 
+        #creates data to be sent for pie chart
         month = "July"
         pie = [['Energy Usage', 'Amount']]
         for entry in entries:
-            if month_dictionary[str(entry.date.month)] == month:
+            if month_dictionary[entry.month] == month:
                 pie.append(['Heating', entry.heating_usage])
                 pie.append(['Cooling', entry.cooling_usage])
                 pie.append(['Lighting', entry.lighting_usage])
                 pie.append(['Appliance', entry.appliance_usage])
         chart_data["pie"] = pie
 
+        #creates data to be sent for line graph
         data_type = "heating_usage"
         line = [['Month', 'Energy Usage (KW)']]
         for entry in entries:
             if data_type == "heating_usage":
-                line.append([month_dictionary[str(entry.date.month)], entry.heating_usage ])
-                type = "heati"
+                line.append([month_dictionary[entry.month], entry.heating_usage ])
+                type = "heating_usage"
             elif data_type == "cooling_usage":
-                line.append([month_dictionary[str(entry.date.month)], entry.cooling_usage ])
+                line.append([month_dictionary[entry.month], entry.cooling_usage ])
             elif data_type == "lighting_usage":
-                line.append([month_dictionary[str(entry.date.month)], entry.lighting_usage ])
+                line.append([month_dictionary[entry.month], entry.lighting_usage ])
             elif data_type == "appliance_usage":
-                line.append([month_dictionary[str(entry.date.month)], entry.appliance_usage])
+                line.append([month_dictionary[entry.month], entry.appliance_usage])
+            chart_data["line"] = line
 
-        chart_data["line"] = line
         self.response.out.write(json.dumps(chart_data))
 
 #operates the leaderboard page, handing in savings as a parameter

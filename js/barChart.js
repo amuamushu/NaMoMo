@@ -15,9 +15,7 @@ function send_bar_request() {
 }
 
 google.charts.load('current', {'packages':['corechart']});
-//google.charts.setOnLoadCallback(send_request());
 google.charts.setOnLoadCallback(() => {send_bar_request()});
-// on load receive request and on response draw the graph
 
 
 
@@ -31,10 +29,9 @@ function drawBarChart(raw_bar_data) {
       draw(data,
            {title:"Energy Usage in a Month",
            backgroundColor: 'transparent',
-           colors: ['#680e8e', '#8217b2', '#aa00f7', '#b154d8', '#c378e2', '#b98ccc'],
+           colors: ['#680e8e', '#8217b2', '#aa00f7', '#b154d8', '#c378e2', '#b98ccc'], //lightest on right
             width:600, height:400,
             vAxis: {title: "Energy (KW)"}, isStacked: true,
             hAxis: {title: "Month"}}
       );
-
 }

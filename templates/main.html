@@ -29,30 +29,41 @@
 
 <!-- tab bar -->
     <div class="tab">
-      <button class="tablinks" onclick="openGraph(event, 'bar')"><i class="material-icons"> bar_chart</i>Bar graph</button>
-      <button class="tablinks" onclick="openGraph(event, 'pie')"><i class="material-icons"> pie_chart</i>Pie chart</button>
-      <button class="tablinks" onclick="openGraph(event, 'line')"><i class="material-icons"> show_chart</i>Line graph</button>
+      <button class="tablinks" onclick="openGraph(event, 'bar')"><i class="material-icons"> bar_chart</i>Usage History</button>
+      <button class="tablinks" onclick="openGraph(event, 'pie')"><i class="material-icons"> pie_chart</i>Monthly Usage Breakdown</button>
+      <button class="tablinks" onclick="openGraph(event, 'line')"><i class="material-icons"> show_chart</i>Usage by Category</button>
+      <button class="tablinks about" onclick="openGraph(event, 'about')"><i class="material-icons">info</i>About</button>
     </div>
 
 <!-- Defines content of each tab -->
     <script src = "https://www.gstatic.com/charts/loader.js"></script>
     <div id="bar" class="tabcontent">
-      <h1 align = "center">Bar graph</h1>
+      <h1 align = "center">Total Usage per Month</h1>
+
       <script src = "/js/barChart.js"></script>
       <p align = "center" id = "barchart"></p>
+      <h3 align = "center" id = "bartips"></h3>
     </div>
 
     <div id="pie" class="tabcontent">
-      <h1 align = "center">Pie chart</h1>
+      <h1 align = "center">Monthly Usage Breakdown</h1>
       <script src = "/js/pieChart.js"></script>
       <p align = "center" id = "piechart"></p>
     </div>
 
     <div id="line" class="tabcontent">
-      <h1 align = "center">Line graph</h1>
+      <h1 align = "center">Breakdown of type_ Usage by Month</h1>
       <script src = "/js/lineChart.js"></script>
       <p align = "center" id = "linechart"></p>
     </div>
+
+    <div id="about" class="tabcontent">
+      <h1 align = "center">About Us</h1>
+      <p align = "center" id = "linechart">hi</p>
+    </div>
+
+
+
 
 <!-- controls the opening of tabs -->
     <script>

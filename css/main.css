@@ -34,6 +34,10 @@ a:hover
   color: tomato;
 }
 
+.about {
+  margin-left: 190px;
+}
+
 #menuToggle
 {
   display: block;

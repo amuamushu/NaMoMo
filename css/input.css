@@ -118,8 +118,41 @@ fieldset {
   box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.5);
 }
 
+#resetform {
+  padding:5px 15px;
+  background:#b98ccc;
+  border:0 none;
+  cursor:pointer;
+  margin-left: 20px;
+  -webkit-border-radius: 5px;
+  border-radius: 5px;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.5);
+}
+
 .copyright {
   text-align: center;
+}
+
+input[type=submit] {
+    padding:5px 15px;
+    background:#b98ccc;
+    border:0 none;
+    margin-left: 70px;
+    cursor:pointer;
+    -webkit-border-radius: 5px;
+    border-radius: 5px;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+#resetform{
+    padding:5px 15px;
+    background:#b98ccc;
+    border:0 none;
+    margin-left: 20px;
+    cursor:pointer;
+    -webkit-border-radius: 5px;
+    border-radius: 5px;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.5);
 }
 
 #contact input:focus,

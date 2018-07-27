@@ -74,7 +74,7 @@ class LoginHandler(webapp2.RequestHandler):
         <head><link rel = "stylesheet" type = "text/css" href = "css/login.css"></head>
         <div class = "login-page">
         <div class = "form">
-            <h1>Welcome to our site, %s! Please Sign up!</h1>
+            <h2>Welcome to NaMoMo! Please sign up!</h2>
             <form method="post" action="/" class="login-form">
             <input type="text" placeholder="First Name:" name="first_name">
             <input type="text" placeholder="Last Name:" name="last_name">
@@ -82,7 +82,7 @@ class LoginHandler(webapp2.RequestHandler):
             </form><br> %s <br>
             </div>
             </div>
-            ''' % (email_address, signout_link_html))
+            ''' % (signout_link_html))
 
     # Otherwise, the user isn't logged in!
     else:
@@ -309,7 +309,7 @@ class LeaderboardHandler(webapp2.RequestHandler):
             for score in scores:
                 scoreslist.append([score.first_name, score.score])
             for score in range(0,len(scoreslist)):
-                scoreslist[score].append(score+1)
+                scoreslist[score].append(score)
             self.response.out.write(content.render(scorelist = scoreslist))
 
         else:

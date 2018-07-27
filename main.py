@@ -119,15 +119,24 @@ class LogoutHandler(webapp2.RequestHandler):
 #gets all user entries and runs main page
 class MainHandler(webapp2.RequestHandler):
     def get(self):
-        content = JINJA_ENV.get_template('templates/main.html')
-        entries = Entry.query().filter(Entry.user_id == users.get_current_user().user_id()).fetch()
-        self.response.write(content.render())
+        user = users.get_current_user()
+        # If the user is logged in...
+        if user:
+            content = JINJA_ENV.get_template('templates/main.html')
+            entries = Entry.query().filter(Entry.user_id == users.get_current_user().user_id()).fetch()
+            self.response.write(content.render())
+        else:
+            self.redirect('/')
 
 #runs input page and saves data from the user to the datastore
 class InputHandler(webapp2.RequestHandler):
     def get(self):
-        content = JINJA_ENV.get_template('templates/input.html')
-        self.response.write(content.render())
+        user = users.get_current_user()
+        if user:
+            content = JINJA_ENV.get_template('templates/input.html')
+            self.response.write(content.render())
+        else:
+            self.redirect('/')
 
     def post(self):
         heating_usage = int(self.request.get('heating_usage'))
@@ -168,10 +177,14 @@ class InputHandler(webapp2.RequestHandler):
             total_this = this_month.heating_usage + this_month.cooling_usage + this_month.lighting_usage + this_month.appliance_usage
             total_last = last_month.heating_usage + last_month.cooling_usage + last_month.lighting_usage + last_month.appliance_usage
             score = total_last - total_this
-            print(score)
             user_id = users.get_current_user().user_id()
             first_name = CssiUser.query().filter(CssiUser.userrid == user_id).fetch()[0].first_name
-            print(first_name)
+
+            past_leaderboard = LeaderboardEntry.query().filter(LeaderboardEntry.user_id == users.get_current_user().user_id()).fetch()
+            if len(past_leaderboard) > 0:
+                score = total_last - total_this
+                past_leaderboard[0].key.delete()
+
             leaderboard_entry = LeaderboardEntry(
             user_id = user_id,
             first_name = first_name,
@@ -255,14 +268,19 @@ class JSONMainHandler(webapp2.RequestHandler):
 #operates the leaderboard page, handing in savings as a parameter
 class LeaderboardHandler(webapp2.RequestHandler):
     def get(self):
-        content = JINJA_ENV.get_template('templates/leaderboard.html')
-        current_month = "July"
-        last_month = "June"
-        scores = LeaderboardEntry.query().order(-LeaderboardEntry.score).fetch(5)
-        scoreslist = []
-        for score in scores:
-            scoreslist.append([score.first_name, score.score])
-        self.response.out.write(content.render(scorelist = scoreslist))
+        user = users.get_current_user()
+        # If the user is logged in...
+        if user:
+            content = JINJA_ENV.get_template('templates/leaderboard.html')
+            current_month = "July"
+            last_month = "June"
+            scores = LeaderboardEntry.query().order(-LeaderboardEntry.score).fetch(5)
+            scoreslist = []
+            for score in scores:
+                scoreslist.append([score.first_name, score.score])
+            self.response.out.write(content.render(scorelist = scoreslist))
+        else:
+            self.redirect('/')    
 
 
 

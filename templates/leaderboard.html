@@ -32,11 +32,15 @@
       <div class="row">
           <div class="name">Name</div><div class="score">KwH Saved</div>
       </div>
+
       {% for score in scorelist %}
+
       <div class="row">
-          <div class="name">{{ score[0] }}</div><div class="score">{{ score[1] }}</div>
+        <div class="name"> {{ score[2] }}. &nbsp  {{ score[0] }}</div><div class="score">{{ score[1] }}</div>
       </div>
+
       {% endfor %}
+
     </div>
 
   </body>

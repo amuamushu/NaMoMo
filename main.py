@@ -33,6 +33,15 @@ class Entry(ndb.Model):
     appliance_usage = ndb.IntegerProperty()
     user_id = ndb.StringProperty()
 
+class LogEntry(ndb.Model):
+    date = ndb.StringProperty()
+    numdate = ndb.IntegerProperty()
+    heating_usage = ndb.IntegerProperty()
+    cooling_usage = ndb.IntegerProperty()
+    lighting_usage = ndb.IntegerProperty()
+    appliance_usage = ndb.IntegerProperty()
+    user_id = ndb.StringProperty()
+
 class LeaderboardEntry(ndb.Model):
     user_id = ndb.StringProperty()
     first_name = ndb.StringProperty()
@@ -82,6 +91,8 @@ class LoginHandler(webapp2.RequestHandler):
       <div class="login-page">
       <div class="form">
       <h2>Please log in or sign up using a Gmail account to use NaMoMo</h2>
+      <br>
+      <br>
       <a href="%s"><button>login</button></a>
 
         </div>
@@ -123,8 +134,15 @@ class MainHandler(webapp2.RequestHandler):
         # If the user is logged in...
         if user:
             content = JINJA_ENV.get_template('templates/main.html')
-            entries = Entry.query().filter(Entry.user_id == users.get_current_user().user_id()).fetch()
-            self.response.write(content.render())
+            logentries = LogEntry.query().filter(Entry.user_id == users.get_current_user().user_id()).fetch()
+            #formats log data
+            logs = []
+            for entry in logentries:
+                logs.append([entry.numdate, entry.date, entry.heating_usage, entry.cooling_usage, entry.lighting_usage, entry.appliance_usage])
+            logs = sorted(logs, key=itemgetter(0))
+            for log in logs:
+                log.pop(0)
+            self.response.write(content.render(logs = logs[::-1]))
         else:
             self.redirect('/')
 
@@ -146,6 +164,16 @@ class InputHandler(webapp2.RequestHandler):
         date = self.request.get('date')
         month = date[5:7]
 
+        logentry = LogEntry(
+            heating_usage = int(heating_usage),
+            cooling_usage = int(cooling_usage),
+            lighting_usage = int(lighting_usage),
+            appliance_usage = int(appliance_usage),
+            date = str(date),
+            numdate = int(date[5:].replace("-","")),
+            user_id = users.get_current_user().user_id()
+        )
+        logentry.put()
         #queries for entries in the recently inputted month
         entries = Entry.query().filter(Entry.user_id == users.get_current_user().user_id())
         this_month_entries = entries.filter(Entry.month == month).fetch()
@@ -170,7 +198,7 @@ class InputHandler(webapp2.RequestHandler):
         previous_month = "06"
         current_month = "07"
 
-        if (entry.month == current_month) and (len(Entry.query().filter(Entry.month == previous_month).fetch()) > 0):
+        if (entry.month == current_month) and (len(Entry.query().filter(Entry.user_id == users.get_current_user().user_id()).filter(Entry.month == previous_month).fetch()) > 0):
             entries = Entry.query().filter(Entry.user_id == users.get_current_user().user_id())
             this_month = entry
             last_month = entries.filter(Entry.month == previous_month).fetch()[0]
@@ -263,7 +291,9 @@ class JSONMainHandler(webapp2.RequestHandler):
         line.insert(0,['Month', 'Energy Usage (KW)'])
         chart_data["line"] = line
 
+
         self.response.out.write(json.dumps(chart_data))
+
 
 #operates the leaderboard page, handing in savings as a parameter
 class LeaderboardHandler(webapp2.RequestHandler):
@@ -278,9 +308,12 @@ class LeaderboardHandler(webapp2.RequestHandler):
             scoreslist = []
             for score in scores:
                 scoreslist.append([score.first_name, score.score])
+            for score in range(0,len(scoreslist)):
+                scoreslist[score].append(score+1)
             self.response.out.write(content.render(scorelist = scoreslist))
+
         else:
-            self.redirect('/')    
+            self.redirect('/')
 
 
 

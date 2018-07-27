@@ -41,8 +41,7 @@ img{
  @import url(https://fonts.googleapis.com/css?family=Roboto:300);
 
 .login-page {
-  width: 600px;
-  height: 600px;
+  width: 360px;
   padding: 8% 0 0;
   margin: auto;
 }
@@ -51,8 +50,6 @@ img{
   z-index: 1;
   background: #FFFFFF;
   max-width: 360px;
-  height: 300px;
-  font-size: 20px;
   margin: 0 auto 100px;
   padding: 45px;
   text-align: center;
@@ -78,7 +75,7 @@ img{
   border: 0;
   padding: 15px;
   color: #FFFFFF;
-  font-size: 30px;
+  font-size: 14px;
   -webkit-transition: all 0.3 ease;
   transition: all 0.3 ease;
   cursor: pointer;

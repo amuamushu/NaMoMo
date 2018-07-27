@@ -42,7 +42,7 @@
       <h1 align = "center">Usage History</h1>
       <script src = "/js/barChart.js"></script>
       <p align = "center" id = "barchart"></p>
-      <p id = "bardiff"></p>
+      <h3 align = "center" id = "bardiff"></h3>
       </p>
     </div>
 
@@ -58,7 +58,7 @@
           <option value="April">April</option>
           <option value="May">May</option>
           <option value="June">June</option>
-          <option value="July">July</option>
+          <option value="July" selected = "selected">July</option>
           <option value="August">August</option>
           <option value="September">September</option>
           <option value="October">October</option>
@@ -69,9 +69,9 @@
     </div>
       <script src = "/js/pieChart.js"></script>
       <p align = "center" id = "piechart"></p>
-      <h3 align = "center" id = "pietips"></h3>
-      <h4 align = "center" id = "piediff"></h4>
-      <p id = "pielist">
+      <h2 align = "center" id = "pietips"></h2>
+      <h3 align = "center" id = "piediff"></h3>
+      <h4 align = "center" id = "pielist"><b></b></h4>
     </div>
 
 
@@ -103,6 +103,13 @@
 
     <div id="log" class="tabcontent">
       <h1 align = "center">Entry Log</h1>
+      {% for log in logs %}
+        <form>
+        <p>{{ log[0] }} --- Heating usage: {{ log[1] }}. Cooling usage: {{ log[2] }}. Lighting usage: {{ log[3] }}.
+         Appliance usage: {{ log[4] }}</p>
+       </form>
+      {% endfor %}
+
     </div>
 
 <!-- controls the opening of tabs -->

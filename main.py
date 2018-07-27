@@ -51,13 +51,14 @@ class LoginHandler(webapp2.RequestHandler):
           users.create_logout_url('/logout'))
       # If the user has previously been to our site, we greet them!
       if cssi_user:
+        self.redirect("/main")
         self.response.write('''
             Welcome %s %s (%s)! <br> %s <br>''' % (
                 cssi_user.first_name,
                 cssi_user.last_name,
                 email_address,
                 signout_link_html))
-        self.redirect("/main")
+        #self.redirect("/main")
       # If the user hasn't been to our site, we ask them to sign up
       else:
         self.response.write('''
@@ -255,13 +256,15 @@ class JSONMainHandler(webapp2.RequestHandler):
 class LeaderboardHandler(webapp2.RequestHandler):
     def get(self):
         content = JINJA_ENV.get_template('templates/leaderboard.html')
-        self.response.write(content.render())
-
-class JSONLeaderboardHandler(webapp2.RequestHandler):
-    def get(self):
         current_month = "July"
         last_month = "June"
-        users = LeaderboardEntry.query().filter(LeaderboardEntry.score)
+        scores = LeaderboardEntry.query().order(-LeaderboardEntry.score).fetch(5)
+        scoreslist = []
+        for score in scores:
+            scoreslist.append([score.first_name, score.score])
+        self.response.out.write(content.render(scorelist = scoreslist))
+
+
 
 
 app = webapp2.WSGIApplication([
@@ -270,7 +273,5 @@ app = webapp2.WSGIApplication([
   ('/input', InputHandler),
   ('/leaderboard', LeaderboardHandler),
   ('/logout', LogoutHandler),
-  ('/JSONmain', JSONMainHandler),
-  ('/JSONleaderboard', JSONLeaderboardHandler)
-
+  ('/JSONmain', JSONMainHandler)
 ], debug=True)

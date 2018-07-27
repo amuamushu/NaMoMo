@@ -40,127 +40,134 @@ img{
 
  @import url(https://fonts.googleapis.com/css?family=Roboto:300);
 
-.login-page {
-  width: 600px;
-  height: 600px;
-  padding: 8% 0 0;
-  margin: auto;
-}
-.form {
-  position: relative;
-  z-index: 1;
-  background: #FFFFFF;
-  max-width: 360px;
-  height: 300px;
-  font-size: 20px;
-  margin: 0 auto 100px;
-  padding: 45px;
-  text-align: center;
-  box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2), 0 5px 5px 0 rgba(0, 0, 0, 0.24);
-}
-.form input {
-  font-family: "Roboto", sans-serif;
-  outline: 0;
-  background: #f2f2f2;
-  width: 100%;
-  border: 0;
-  margin: 0 0 15px;
-  padding: 15px;
-  box-sizing: border-box;
-  font-size: 14px;
-}
-.form button {
-  font-family: "Roboto", sans-serif;
-  text-transform: uppercase;
-  outline: 0;
-  background: #9D1ED3;
-  width: 100%;
-  border: 0;
-  padding: 15px;
-  color: #FFFFFF;
-  font-size: 30px;
-  -webkit-transition: all 0.3 ease;
-  transition: all 0.3 ease;
-  cursor: pointer;
-}
-.form button:hover,.form button:active,.form button:focus {
-  background: #b98ccc;
-}
-.form .message {
-  margin: 15px 0 0;
-  color: #b3b3b3;
-  font-size: 12px;
-}
-.form .message a {
-  color: #4CAF50;
-  text-decoration: none;
-}
-.form .register-form {
-  display: none;
-}
-.container {
-  position: relative;
-  z-index: 1;
-  max-width: 300px;
-  margin: 0 auto;
-}
-.container:before, .container:after {
-  content: "";
-  display: block;
-  clear: both;
-}
-.container .info {
-  margin: 50px auto;
-  text-align: center;
-}
-.container .info h1 {
-  margin: 0 0 15px;
-  padding: 0;
-  font-size: 36px;
-  font-weight: 300;
-  color: #1a1a1a;
-}
-.container .info span {
-  color: #4d4d4d;
-  font-size: 12px;
-}
-.container .info span a {
-  color: #000000;
-  text-decoration: none;
-}
-.container .info span .fa {
-  color: #EF3B3A;
-}
+ #login .login-page {
+   width: 600px;
+   height: 600px;
+   padding: 8% 0 0;
+   margin: auto;
+ }
+
+ #login .form {
+   position: relative;
+   z-index: 1;
+   background: #FFFFFF;
+   max-width: 600px;
+   height: 400px;
+   font-size: 20px;
+   margin: 0 auto 100px;
+   padding: 45px;
+   text-align: center;
+   box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2), 0 5px 5px 0 rgba(0, 0, 0, 0.24);
+ }
+
+ #login .form input {
+   font-family: "Roboto", sans-serif;
+   outline: 0;
+   background: #f2f2f2;
+   width: 100%;
+   border: 0;
+   margin: 0 0 15px;
+   padding: 15px;
+   box-sizing: border-box;
+   font-size: 14px;
+ }
+ #login .form button {
+   font-family: "Roboto", sans-serif;
+   text-transform: uppercase;
+   outline: 0;
+   background: #9D1ED3;
+   width: 100%;
+   border: 0;
+   padding: 15px;
+   color: #FFFFFF;
+   font-size: 30px;
+   -webkit-transition: all 0.3 ease;
+   transition: all 0.3 ease;
+   cursor: pointer;
+ }
+
+ #login .form button:hover,.form button:active,.form button:focus {
+   background: #b98ccc;
+ }
+ #login .form .message {
+   margin: 15px 0 0;
+   color: #b3b3b3;
+   font-size: 12px;
+ }
+ #login .form .message a {
+   color: #4CAF50;
+   text-decoration: none;
+ }
+ #login .form .register-form {
+   display: none;
+ }
+ #login .container {
+   position: relative;
+   z-index: 1;
+   max-width: 300px;
+   margin: 0 auto;
+ }
+ #login .container:before, .container:after {
+   content: "";
+   display: block;
+   clear: both;
+ }
+ #login .container .info {
+   margin: 50px auto;
+   text-align: center;
+ }
+ #login .container .info h1 {
+   margin: 0 0 15px;
+   padding: 0;
+   font-size: 36px;
+   font-weight: 300;
+   color: #1a1a1a;
+ }
+ #login .container .info span {
+   color: #4d4d4d;
+   font-size: 12px;
+ }
+ #login .container .info span a {
+   color: #000000;
+   text-decoration: none;
+ }
+ #login .container .info span .fa {
+   color: #EF3B3A;
+ }
 
 /*9D1ED3*/
-body {
-  background: ##b98ccc; /* fallback for old browsers */
-  background: -webkit-linear-gradient(right, #7c777f, #f8efff);
-  background: -moz-linear-gradient(right, #7c777f, #f8efff);
-  background: -o-linear-gradient(right, #7c777f, #f8efff);
-  background: linear-gradient(to left, #7c777f, #f8efff);
-  font-family: "Roboto", sans-serif;
+/* body { */
+  /* background: ##b98ccc; /* fallback for old browsers */ */
+  /* background: -webkit-linear-gradient(right, #7c777f, #f8efff); */
+  /* background: -moz-linear-gradient(right, #7c777f, #f8efff); */
+  /* background: -o-linear-gradient(right, #7c777f, #f8efff);
+  background: linear-gradient(to left, #7c777f, #f8efff); */
+  /* font-family: "Roboto", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-}
+} */
 
  /* Hamburger Menu ish SO DON'T DELETE */
 
 
- a
+ #login a
  {
    text-decoration: none;
-   color: #232323;
+   color: #232323; /* hamburger bar text colors */
 
    transition: color 0.3s ease;
  }
 
- a:hover
+ #login a:hover
  {
    color: #DFB3FC;
  }
 
- #menuToggle
+ #login .about {
+   margin-left: 190px;
+ }
+
+ #login #menuToggle
  {
    display: block;
    position: absolute;
@@ -173,7 +180,7 @@ body {
    user-select: none;
  }
 
- #menuToggle input
+ #login #menuToggle input
  {
    display: block;
    width: 40px;
@@ -188,105 +195,4 @@ body {
    z-index: 2; /* and place it over the hamburger */
 
    -webkit-touch-callout: none;
- }
-
- /*
-  * Just a quick hamburger
-  */
- #menuToggle span
- {
-   display: block;
-   width: 33px;
-   height: 4px;
-   margin-bottom: 5px;
-   position: relative;
-
-   background: #cdcdcd;
-   border-radius: 3px;
-
-   z-index: 1;
-
-   transform-origin: 4px 0px;
-
-   transition: transform 0.5s cubic-bezier(0.77,0.2,0.05,1.0),
-               background 0.5s cubic-bezier(0.77,0.2,0.05,1.0),
-               opacity 0.55s ease;
- }
-
- #menuToggle span:first-child
- {
-   transform-origin: 0% 0%;
- }
-
- #menuToggle span:nth-last-child(2)
- {
-   transform-origin: 0% 100%;
- }
-
- /*
-  * Transform all the slices of hamburger
-  * into a crossmark.
-  */
- #menuToggle input:checked ~ span
- {
-   opacity: 1;
-   transform: rotate(45deg) translate(-2px, -1px);
-   background: #232323;
- }
-
- /*
-  * But let's hide the middle one.
-  */
- #menuToggle input:checked ~ span:nth-last-child(3)
- {
-   opacity: 0;
-   transform: rotate(0deg) scale(0.2, 0.2);
- }
-
- /*
-  * Ohyeah and the last one should go the other direction
-  */
- #menuToggle input:checked ~ span:nth-last-child(2)
- {
-   opacity: 1;
-   transform: rotate(-45deg) translate(0, -1px);
- }
-
- /*
-  * Make this absolute positioned
-  * at the top left of the screen
-  */
- #menu
- {
-   position: absolute;
-   width: 300px;
-   margin: -100px 0 0 0;
-   padding: 50px;
-   padding-top: 125px;
-   right: -100px;
-
-   background: #ededed;
-   list-style-type: none;
-   -webkit-font-smoothing: antialiased;
-   /* to stop flickering of text in safari */
-
-   transform-origin: 0% 0%;
-   transform: translate(100%, 0);
-
-   transition: transform 0.5s cubic-bezier(0.77,0.2,0.05,1.0);
- }
-
- #menu li
- {
-   padding: 10px 0;
-   font-size: 22px;
- }
-
- /*
-  * And let's fade it in from the left
-  */
- #menuToggle input:checked ~ ul
- {
-   transform: scale(1.0, 1.0);
-   opacity: 1;
  }

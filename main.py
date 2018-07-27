@@ -60,44 +60,62 @@ class LoginHandler(webapp2.RequestHandler):
           users.create_logout_url('/logout'))
       # If the user has previously been to our site, we greet them!
       if cssi_user:
-        self.redirect("/main")
         self.response.write('''
             Welcome %s %s (%s)! <br> %s <br>''' % (
                 cssi_user.first_name,
                 cssi_user.last_name,
                 email_address,
                 signout_link_html))
-        #self.redirect("/main")
+        self.redirect("/main")
       # If the user hasn't been to our site, we ask them to sign up
       else:
-        self.response.write('''
-        <head><link rel = "stylesheet" type = "text/css" href = "css/login.css"></head>
-        <div class = "login-page">
-        <div class = "form">
-            <h2>Welcome to NaMoMo! Please sign up!</h2>
-            <form method="post" action="/" class="login-form">
-            <input type="text" placeholder="First Name:" name="first_name">
-            <input type="text" placeholder="Last Name:" name="last_name">
-            <input type="submit">
-            </form><br> %s <br>
-            </div>
-            </div>
-            ''' % (signout_link_html))
 
+        content = JINJA_ENV.get_template('templates/fakemain.html')
+        self.response.write(content.render({'login' : '''
+        <head><link rel = "stylesheet" type = "text/css" href = "css/login.css"></head>
+         <div class="login-page">
+        <div id="login">
+        <div class="form">
+            Welcome to our site, %s!  Please sign up! <br>
+            <form method="post" action="/" class="login-form">
+            <label>First name: &nbsp</label>
+            <input type="text" name="first_name">
+            <label>Last name: &nbsp</label>
+            <input type="text" name="last_name">
+            <input type="submit">
+            </form><br> %s <br></div></div>
+            ''' % (email_address, signout_link_html)}))
     # Otherwise, the user isn't logged in!
     else:
-      self.response.write('''
+      content = JINJA_ENV.get_template('templates/fakemain.html')
+      self.response.write(content.render({'login' : '''
       <head><link rel = "stylesheet" type = "text/css" href = "css/login.css"></head>
+      <div id="login">
       <div class="login-page">
       <div class="form">
       <h2>Please log in or sign up using a Gmail account to use NaMoMo</h2>
       <br>
-      <br>
       <a href="%s"><button>login</button></a>
 
         </div>
-        </div>''' % (
-          users.create_login_url('/')))
+        </div></div>''' % (
+          users.create_login_url('/'))}))
+
+
+  def post(self):
+    user = users.get_current_user()
+    if not user:
+      # You shouldn't be able to get here without being logged in
+      self.error(500)
+      return
+    cssi_user = CssiUser(
+        first_name=self.request.get('first_name'),
+        last_name=self.request.get('last_name'),
+        id=user.user_id())
+    cssi_user.put()
+    self.redirect("/main")
+    self.response.write('Thanks for signing up, %s!' %
+        cssi_user.first_name)
 
 
 
@@ -309,7 +327,7 @@ class LeaderboardHandler(webapp2.RequestHandler):
             for score in scores:
                 scoreslist.append([score.first_name, score.score])
             for score in range(0,len(scoreslist)):
-                scoreslist[score].append(score)
+                scoreslist[score].append(score+1)
             self.response.out.write(content.render(scorelist = scoreslist))
 
         else:

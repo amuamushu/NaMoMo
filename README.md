@@ -7,4 +7,5 @@ Google CSSI Final Project - NaMoMo is a sustainability web app that allows users
 * Leaderboard to encourage social saving
 * An entry log that allows users to delete entries
 
-
+# URL
+namomo-211316.appspot.com

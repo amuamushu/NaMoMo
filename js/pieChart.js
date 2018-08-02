@@ -20,7 +20,7 @@ document.getElementById("changeMonth").addEventListener("click", function(){
 google.charts.load('current', {'packages':['corechart']});
 
 //default month is July
-google.charts.setOnLoadCallback(() => {send_pie_request("July")});
+google.charts.setOnLoadCallback(() => {send_pie_request("August")});
 
 // Draw the chart and set the chart values
 function drawPieChart(raw_pie_data) {

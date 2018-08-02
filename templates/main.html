@@ -58,8 +58,8 @@
           <option value="April">April</option>
           <option value="May">May</option>
           <option value="June">June</option>
-          <option value="July" selected = "selected">July</option>
-          <option value="August">August</option>
+          <option value="July" >July</option>
+          <option value="August" selected = "selected">August</option>
           <option value="September">September</option>
           <option value="October">October</option>
           <option value="November">November</option>
@@ -103,10 +103,12 @@
 
     <div id="log" class="tabcontent">
       <h1 align = "center">Entry Log</h1>
+      <script src = "/js/updateData.js"></script>
       {% for log in logs %}
       <form align = "center">
         <h4>{{ log[0] }} --- Heating usage: {{ log[1] }}. Cooling usage: {{ log[2] }}. Lighting usage: {{ log[3] }}.
          Appliance usage: {{ log[4] }} </h4>
+         <button onclick = "send_update_request({{ log[0][:4]|string + log[0][5:7]|string + log[0][8:10]|string }})">Delete Entry</button>
        </form>
       {% endfor %}
 
@@ -180,6 +182,9 @@
           in real-time what their electricity usage is.
         </p>
       </div>
+    </div>
+            <div class="jumbotron text-center login">
+
     </div>
 
   </body>

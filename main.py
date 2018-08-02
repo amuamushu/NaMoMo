@@ -213,9 +213,16 @@ class InputHandler(webapp2.RequestHandler):
             user_id = users.get_current_user().user_id()
         )
         entry.put()
-        previous_month = "06"
-        current_month = "07"
-
+        d = datetime.date.today()
+        current_month =d.strftime('%m')
+        previous_month = ""
+        if int(current_month) <= 10:
+          if current_month == "01":
+            previous_month = "12"
+          else: 
+              previous_month = "0" + str(int(current_month)-1)
+        else:
+          previous_month =  str(int(current_month) - 1)
         if (entry.month == current_month) and (len(Entry.query().filter(Entry.user_id == users.get_current_user().user_id()).filter(Entry.month == previous_month).fetch()) > 0):
             entries = Entry.query().filter(Entry.user_id == users.get_current_user().user_id())
             this_month = entry
@@ -333,6 +340,19 @@ class LeaderboardHandler(webapp2.RequestHandler):
         else:
             self.redirect('/')
 
+class DeleteHandler(webapp2.RequestHandler):
+    def get(self):
+        date = self.request.get('date')
+        logentries = LogEntry.query().filter(LogEntry.user_id == users.get_current_user().user_id())
+        userentries = logentries.filter(LogEntry.date == date).fetch()
+        for i in userentries:
+	        heating_usage = i.heating_usage
+	        cooling_usage = i.cooling_usage
+	        lighting_usage = i.lighting_usage
+	        appliance_usage = i.appliance_usage
+        userentries[0].key.delete()
+        entries = Entry.query().filter(Entry.user_id == users.get_current_user().user_id())
+        month_entries = entries.filter(Entry.date == date).fetch()
 
 
 
@@ -342,5 +362,6 @@ app = webapp2.WSGIApplication([
   ('/input', InputHandler),
   ('/leaderboard', LeaderboardHandler),
   ('/logout', LogoutHandler),
-  ('/JSONmain', JSONMainHandler)
+  ('/JSONmain', JSONMainHandler),
+  ('/delete', DeleteHandler)
 ], debug=True)
